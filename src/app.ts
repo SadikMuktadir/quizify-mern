@@ -5,11 +5,9 @@ import cors from 'cors';
 
 const app = express();
 
-app.set('trust proxy', 1);
-
 app.use(
   cors({
-    origin: ['https://quizifyfront.vercel.app', 'http://localhost:3000'],
+    origin: ['http://localhost:3000', 'https://quizifyfront.vercel.app'],
     credentials: true,
   }),
 );
