@@ -16,7 +16,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const app_1 = __importDefault(require("./app"));
 const config_1 = __importDefault(require("./app/config"));
 const dns_1 = __importDefault(require("dns"));
-dns_1.default.setServers(["1.1.1.1", "8.8.8.8"]);
+dns_1.default.setServers(['1.1.1.1', '8.8.8.8']);
 function server() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

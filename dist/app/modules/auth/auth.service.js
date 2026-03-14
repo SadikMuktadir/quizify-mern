@@ -22,7 +22,7 @@ const user_model_1 = require("../user/user.model");
 const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield user_model_1.User.findOne({
         email: payload.email,
-        status: 'ACTIVE'
+        status: 'ACTIVE',
     }).exec();
     if (!user) {
         throw new Error('User not found or inactive');
@@ -49,7 +49,7 @@ const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
     }
     const userData = yield user_model_1.User.findOne({
         email: decodedData.email,
-        status: 'ACTIVE'
+        status: 'ACTIVE',
     }).exec();
     if (!userData) {
         throw new Error('User not found or inactive');
@@ -62,5 +62,5 @@ const refreshToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.authService = {
     loginUser,
-    refreshToken
+    refreshToken,
 };

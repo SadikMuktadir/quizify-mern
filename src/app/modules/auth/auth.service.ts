@@ -7,16 +7,19 @@ import bcrypt from 'bcryptjs';
 import { User } from '../user/user.model';
 
 const loginUser = async (payload: { email: string; password: string }) => {
-  const user = await User.findOne({ 
-    email: payload.email, 
-    status: 'ACTIVE' 
+  const user = await User.findOne({
+    email: payload.email,
+    status: 'ACTIVE',
   }).exec();
 
   if (!user) {
     throw new Error('User not found or inactive');
   }
 
-  const isPasswordCorrect = await bcrypt.compare(payload.password, user.password);
+  const isPasswordCorrect = await bcrypt.compare(
+    payload.password,
+    user.password,
+  );
 
   if (!isPasswordCorrect) {
     throw new Error('Password is wrong');
@@ -25,13 +28,13 @@ const loginUser = async (payload: { email: string; password: string }) => {
   const accessToken = jwtHelper.generateToken(
     { email: user.email, role: user.role },
     config.jwt_access_token as string,
-    '1h'
+    '1h',
   );
 
   const refreshToken = jwtHelper.generateToken(
     { email: user.email, role: user.role },
     config.jwt_refresh_token as string,
-    '90d'
+    '90d',
   );
 
   return {
@@ -41,18 +44,20 @@ const loginUser = async (payload: { email: string; password: string }) => {
   };
 };
 
-
 const refreshToken = async (token: string) => {
   let decodedData;
   try {
-    decodedData = jwtHelper.verifyToken(token, config.jwt_refresh_token as string);
+    decodedData = jwtHelper.verifyToken(
+      token,
+      config.jwt_refresh_token as string,
+    );
   } catch (err) {
     throw new Error('You are not authorized!');
   }
 
-  const userData = await User.findOne({ 
-    email: decodedData.email, 
-    status: 'ACTIVE' 
+  const userData = await User.findOne({
+    email: decodedData.email,
+    status: 'ACTIVE',
   }).exec();
 
   if (!userData) {
@@ -62,7 +67,7 @@ const refreshToken = async (token: string) => {
   const accessToken = jwtHelper.generateToken(
     { email: userData.email, role: userData.role },
     config.jwt_access_token as string,
-    '1h'
+    '1h',
   );
 
   return {
@@ -71,9 +76,7 @@ const refreshToken = async (token: string) => {
   };
 };
 
-
-
 export const authService = {
   loginUser,
-  refreshToken
+  refreshToken,
 };
