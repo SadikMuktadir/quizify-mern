@@ -1,82 +1,72 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import { jwtHelper } from '../../../utils/jwtHelper';
+import bcrypt from 'bcrypt';
+import User from './auth.model';
 import config from '../../config';
-import bcrypt from 'bcryptjs';
-import { User } from '../user/user.model';
+import jwt from 'jsonwebtoken';
+import { ILoginUser, IUser } from './auth.interface';
 
-const loginUser = async (payload: { email: string; password: string }) => {
-  const user = await User.findOne({
-    email: payload.email,
-    status: 'ACTIVE',
-  }).exec();
-
-  if (!user) {
-    throw new Error('User not found or inactive');
+const registerUser = async (payload: IUser) => {
+  if (!payload.password) {
+    throw new Error('Password is required');
   }
 
-  const isPasswordCorrect = await bcrypt.compare(
-    payload.password,
-    user.password,
+  const hashedPassword = await bcrypt.hash(payload.password, 12);
+
+  const userData = { ...payload, password: hashedPassword };
+  const result = await User.create(userData);
+  const token = jwt.sign(
+    {
+      _id: result._id,
+      email: result?.email,
+      role: result?.role,
+    },
+    config.jwt_access_token || 'secret-token',
+    { expiresIn: '30d' },
   );
 
-  if (!isPasswordCorrect) {
-    throw new Error('Password is wrong');
-  }
-
-  const accessToken = jwtHelper.generateToken(
-    { email: user.email, role: user.role },
-    config.jwt_access_token as string,
-    '1h',
-  );
-
-  const refreshToken = jwtHelper.generateToken(
-    { email: user.email, role: user.role },
-    config.jwt_refresh_token as string,
-    '90d',
-  );
-
-  return {
-    accessToken,
-    refreshToken,
-    needPasswordChange: user.needPasswordChange,
-  };
+  return { token, user: result };
 };
 
-const refreshToken = async (token: string) => {
-  let decodedData;
-  try {
-    decodedData = jwtHelper.verifyToken(
-      token,
-      config.jwt_refresh_token as string,
-    );
-  } catch (err) {
-    throw new Error('You are not authorized!');
+const loginUser = async (payload: ILoginUser) => {
+  const user = await User.findOne({
+    email: payload?.email,
+  }).select('+password');
+
+  if (!user) {
+    throw new Error('User not found');
   }
 
-  const userData = await User.findOne({
-    email: decodedData.email,
-    status: 'ACTIVE',
-  }).exec();
-
-  if (!userData) {
-    throw new Error('User not found or inactive');
-  }
-
-  const accessToken = jwtHelper.generateToken(
-    { email: userData.email, role: userData.role },
-    config.jwt_access_token as string,
-    '1h',
+  const isPasswordMatched = await bcrypt.compare(
+    payload?.password,
+    user?.password,
   );
 
-  return {
-    accessToken,
-    needPasswordChange: userData.needPasswordChange,
-  };
+  if (!isPasswordMatched) {
+    throw new Error('Invalid credentials');
+  }
+
+  if (!config.jwt_access_token) {
+    throw new Error('JWT_SECRET is not defined');
+  }
+  const token = jwt.sign(
+    {
+      _id: user?._id,
+      email: user?.email,
+      role: user?.role,
+    },
+    config.jwt_access_token || 'secret-token',
+    { expiresIn: '30d' },
+  );
+
+  return { token, user };
+};
+
+const getAllUser = async () => {
+  const result = await User.find();
+  return result;
 };
 
 export const authService = {
+  registerUser,
   loginUser,
-  refreshToken,
+  getAllUser,
 };

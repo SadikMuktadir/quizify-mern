@@ -1,59 +1,38 @@
 import { Request, Response } from 'express';
-import catchAsync from '../../../utils/catchAsync';
-import sendResponse from '../../../utils/sendResponse';
 import { authService } from './auth.service';
-import httpStatus from 'http-status';
 
-const loginUser = catchAsync(async (req: Request, res: Response) => {
-  const result = await authService.loginUser(req.body);
-  const { accessToken, refreshToken, needPasswordChange } = result;
-
-  res.cookie('accessToken', accessToken, {
-    secure: true,
-    httpOnly: true,
-    sameSite: 'none',
-    maxAge: 1000 * 60 * 60,
-  });
-
-  res.cookie('refreshToken', refreshToken, {
-    secure: true,
-    httpOnly: true,
-    sameSite: 'none',
-    maxAge: 1000 * 60 * 60 * 24 * 90,
-  });
-
-  sendResponse(res, {
-    statusCode: 201,
+const registerUser = async (req: Request, res: Response) => {
+  const payload = req.body;
+  const result = await authService.registerUser(payload);
+  res.status(201).send({
     success: true,
-    message: 'User Login Succesfully',
-    data: {
-      needPasswordChange,
-    },
+    message: 'User created successfully',
+    token: result?.token,
+    data: result?.user,
   });
-});
+};
 
-const refreshToken = catchAsync(async (req: Request, res: Response) => {
-  const { refreshToken } = req.cookies;
-
-  const result = await authService.refreshToken(refreshToken);
-  res.cookie('accessToken', result.accessToken, {
-    secure: true,
-    httpOnly: true,
-    sameSite: 'none',
-    maxAge: 1000 * 60 * 60,
-  });
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
+const loginUser = async (req: Request, res: Response) => {
+  const getUser = req.body;
+  const result = await authService.loginUser(getUser);
+  res.status(201).send({
     success: true,
-    message: 'Access token genereated successfully!',
-    data: {
-      message: 'Access token genereated successfully!',
-    },
+    message: 'User login successfully',
+    token: result?.token,
+    data: result?.user,
   });
-});
+};
+const getAllUser = async (req: Request, res: Response) => {
+  const result = await authService.getAllUser();
+  res.status(201).send({
+    success: true,
+    message: 'User login successfully',
+    data: result,
+  });
+};
 
 export const authController = {
+  registerUser,
   loginUser,
-  refreshToken,
+  getAllUser,
 };

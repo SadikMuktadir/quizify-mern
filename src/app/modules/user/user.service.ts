@@ -4,7 +4,7 @@ import { Request } from 'express';
 import bcrypt from 'bcryptjs';
 import { fileUploader } from '../../../utils/image/fileUploader';
 import { TOptions } from '../../../utils/pagination';
-import { User } from './user.model';
+import { UserPrev } from './user.model';
 
 const createUser = async (req: Request) => {
   if (req.file) {
@@ -14,7 +14,7 @@ const createUser = async (req: Request) => {
 
   const hashedPassword = await bcrypt.hash(req.body.password, 8);
 
-  const result = await User.create({
+  const result = await UserPrev.create({
     email: req.body.email,
     password: hashedPassword,
     profilePhoto: req.body.profilePhoto || undefined,
@@ -25,7 +25,7 @@ const createUser = async (req: Request) => {
 const createModerator = async (req: Request) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 8);
 
-  const result = await User.create({
+  const result = await UserPrev.create({
     email: req.body.email,
     password: hashedPassword,
     role: 'MODERATOR',
@@ -37,7 +37,7 @@ const createModerator = async (req: Request) => {
 const createAdmin = async (req: Request) => {
   const hashedPassword = await bcrypt.hash(req.body.password, 8);
 
-  const result = await User.create({
+  const result = await UserPrev.create({
     email: req.body.email,
     password: hashedPassword,
     role: 'ADMIN',
@@ -70,12 +70,12 @@ const getAllUser = async (params: any, options: TOptions) => {
   const whereCondition =
     andConditions.length > 0 ? { $and: andConditions } : {};
 
-  const result = await User.find(whereCondition)
+  const result = await UserPrev.find(whereCondition)
     .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
     .skip(skip)
     .limit(Number(limit));
 
-  const total = await User.countDocuments(whereCondition);
+  const total = await UserPrev.countDocuments(whereCondition);
 
   return {
     meta: {

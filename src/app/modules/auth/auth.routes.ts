@@ -1,9 +1,12 @@
-import express from 'express';
+import { Router } from 'express';
 import { authController } from './auth.controller';
+import auth from '../../../middleware/auth';
 
-const router = express.Router();
+const authRouter = Router();
 
-router.post('/login', authController.loginUser);
-router.post('/refresh-token', authController.refreshToken);
+authRouter.post('/register-user', authController.registerUser);
 
-export const authRoutes = router;
+authRouter.post('/login-user', authController.loginUser);
+authRouter.get('/all-user', auth('ADMIN'), authController.getAllUser);
+
+export default authRouter;

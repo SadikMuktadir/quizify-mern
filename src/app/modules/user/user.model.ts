@@ -35,4 +35,4 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-export const User = mongoose.model<IUser>('User', userSchema);
+export const UserPrev = mongoose.model<IUser>('UserPrev', userSchema);
