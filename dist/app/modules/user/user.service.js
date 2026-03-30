@@ -33,7 +33,7 @@ const createUser = (req) => __awaiter(void 0, void 0, void 0, function* () {
         req.body.profilePhoto = uploadFile === null || uploadFile === void 0 ? void 0 : uploadFile.secure_url;
     }
     const hashedPassword = yield bcryptjs_1.default.hash(req.body.password, 8);
-    const result = yield user_model_1.User.create({
+    const result = yield user_model_1.UserPrev.create({
         email: req.body.email,
         password: hashedPassword,
         profilePhoto: req.body.profilePhoto || undefined,
@@ -42,7 +42,7 @@ const createUser = (req) => __awaiter(void 0, void 0, void 0, function* () {
 });
 const createModerator = (req) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcryptjs_1.default.hash(req.body.password, 8);
-    const result = yield user_model_1.User.create({
+    const result = yield user_model_1.UserPrev.create({
         email: req.body.email,
         password: hashedPassword,
         role: 'MODERATOR',
@@ -51,7 +51,7 @@ const createModerator = (req) => __awaiter(void 0, void 0, void 0, function* () 
 });
 const createAdmin = (req) => __awaiter(void 0, void 0, void 0, function* () {
     const hashedPassword = yield bcryptjs_1.default.hash(req.body.password, 8);
-    const result = yield user_model_1.User.create({
+    const result = yield user_model_1.UserPrev.create({
         email: req.body.email,
         password: hashedPassword,
         role: 'ADMIN',
@@ -74,11 +74,11 @@ const getAllUser = (params, options) => __awaiter(void 0, void 0, void 0, functi
         andConditions.push(filterData);
     }
     const whereCondition = andConditions.length > 0 ? { $and: andConditions } : {};
-    const result = yield user_model_1.User.find(whereCondition)
+    const result = yield user_model_1.UserPrev.find(whereCondition)
         .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
         .skip(skip)
         .limit(Number(limit));
-    const total = yield user_model_1.User.countDocuments(whereCondition);
+    const total = yield user_model_1.UserPrev.countDocuments(whereCondition);
     return {
         meta: {
             page: Number(page),
