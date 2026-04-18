@@ -4,6 +4,13 @@ import { authService } from './auth.service';
 const registerUser = async (req: Request, res: Response) => {
   const payload = req.body;
   const result = await authService.registerUser(payload);
+
+  res.cookie('accessToken', result.token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'lax',
+  });
+
   res.status(201).send({
     success: true,
     message: 'User created successfully',
@@ -15,6 +22,13 @@ const registerUser = async (req: Request, res: Response) => {
 const loginUser = async (req: Request, res: Response) => {
   const getUser = req.body;
   const result = await authService.loginUser(getUser);
+
+  res.cookie('accessToken', result.token, {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'lax',
+  });
+
   res.status(201).send({
     success: true,
     message: 'User login successfully',

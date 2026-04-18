@@ -26,7 +26,7 @@ const uploadQuestions = async (req: Request) => {
 
 const getAllQuestions = async (params: any) => {
   const result = await Question.find()
-    .sort({ createdAt: -1 }); // descending
+    .sort({ createdAt: -1 });
 
   return result;
 };
