@@ -1,0 +1,34 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ResultService = void 0;
+const result_model_1 = require("./result.model");
+const saveResult = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    const { total, correct, wrong, skipped, score } = req.body;
+    const result = yield result_model_1.Result.create({
+        userId: req.user._id,
+        total,
+        correct,
+        wrong,
+        skipped,
+        score,
+    });
+    return result;
+});
+const getMyResults = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    return yield result_model_1.Result.find({ userId: req.user._id }).sort({
+        createdAt: -1,
+    });
+});
+exports.ResultService = {
+    saveResult,
+    getMyResults,
+};

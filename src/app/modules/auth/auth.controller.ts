@@ -9,12 +9,12 @@ const registerUser = async (req: Request, res: Response) => {
     httpOnly: true,
     secure: false,
     sameSite: 'lax',
+     maxAge: 1000 * 60 * 60 * 24 * 30,
   });
 
   res.status(201).send({
     success: true,
     message: 'User created successfully',
-    token: result?.token,
     data: result?.user,
   });
 };
@@ -23,18 +23,18 @@ const loginUser = async (req: Request, res: Response) => {
   const getUser = req.body;
   const result = await authService.loginUser(getUser);
 
-  res.cookie('accessToken', result.token, {
-    httpOnly: true,
-    secure: false,
-    sameSite: 'lax',
-  });
+res.cookie('accessToken', result.token, {
+  httpOnly: true,
+  secure: false,
+  sameSite: 'lax',
+  maxAge: 1000 * 60 * 60 * 24 * 30,
+});
 
-  res.status(201).send({
-    success: true,
-    message: 'User login successfully',
-    token: result?.token,
-    data: result?.user,
-  });
+res.status(200).json({
+  success: true,
+  message: 'Login successful',
+  data: result.user,
+});
 };
 const getAllUser = async (req: Request, res: Response) => {
   const result = await authService.getAllUser();

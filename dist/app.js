@@ -21,7 +21,7 @@ app.use((0, cookie_parser_1.default)());
 app.use('/api/v1', routes_1.default);
 app.get('/', (req, res) => {
     res.send({
-        message: 'Server is running',
+        message: 'Server is running......',
     });
 });
 exports.default = app;

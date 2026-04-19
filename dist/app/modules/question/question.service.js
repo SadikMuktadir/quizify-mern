@@ -31,7 +31,7 @@ const uploadQuestions = (req) => __awaiter(void 0, void 0, void 0, function* () 
 });
 const getAllQuestions = (params) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield question_model_1.Question.find()
-        .sort({ createdAt: -1 }); // descending
+        .sort({ createdAt: -1 });
     return result;
 });
 const deleteQuestion = (id) => __awaiter(void 0, void 0, void 0, function* () {

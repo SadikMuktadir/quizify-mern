@@ -14,6 +14,11 @@ const auth_service_1 = require("./auth.service");
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const payload = req.body;
     const result = yield auth_service_1.authService.registerUser(payload);
+    res.cookie('accessToken', result.token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+    });
     res.status(201).send({
         success: true,
         message: 'User created successfully',
@@ -24,6 +29,11 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const getUser = req.body;
     const result = yield auth_service_1.authService.loginUser(getUser);
+    res.cookie('accessToken', result.token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+    });
     res.status(201).send({
         success: true,
         message: 'User login successfully',
