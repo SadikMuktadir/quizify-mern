@@ -8,6 +8,15 @@ const resultSchema = new Schema<IResult>(
       ref: 'User',
       required: true,
     },
+    category: { type: String },
+    topicName: { type: String },
+
+    questionIds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Question',
+      },
+    ],
     total: { type: Number },
     correct: { type: Number },
     wrong: { type: Number },

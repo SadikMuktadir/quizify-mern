@@ -2,7 +2,16 @@ import { Request } from 'express';
 import { Result } from './result.model';
 
 const saveResult = async (req: Request) => {
-  const { total, correct, wrong, skipped, score } = req.body;
+  const {
+    total,
+    correct,
+    wrong,
+    skipped,
+    score,
+    category,
+    topicName,
+    questionIds,
+  } = req.body;
 
   const result = await Result.create({
     userId: req.user._id,
@@ -11,6 +20,9 @@ const saveResult = async (req: Request) => {
     wrong,
     skipped,
     score,
+    category,
+    topicName,
+    questionIds,
   });
 
   return result;
