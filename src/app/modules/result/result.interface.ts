@@ -1,10 +1,10 @@
-import { ObjectId } from 'mongoose';
+import { Types } from 'mongoose';
 
 export interface IResult {
-  userId: ObjectId;
+  userId: Types.ObjectId;
   category: string;
   topicName: string;
-  questionIds?: ObjectId[];
+  questionIds?: Types.ObjectId[];
   total: number;
   correct: number;
   wrong: number;

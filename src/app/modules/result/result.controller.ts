@@ -13,18 +13,19 @@ const saveResult = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getMyResults = catchAsync(async (req: Request, res: Response) => {
-  const results = await ResultService.getMyResults(req);
-
+const getSingleResults = catchAsync(async (req: Request, res: Response) => {
+  const resultId = req.params.resultId as string;
+  console.log('Result ID:', req.params.resultId);
+  const result = await ResultService.getSingleResult(resultId);
   sendResponse(res, {
     statusCode: 200,
     success: true,
-    message: 'Results fetched successfully',
-    data: results,
+    message: 'Results get successfully',
+    data: result,
   });
 });
 
 export const ResultController = {
   saveResult,
-  getMyResults,
+  getSingleResults,
 };

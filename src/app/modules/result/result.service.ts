@@ -28,13 +28,12 @@ const saveResult = async (req: Request) => {
   return result;
 };
 
-const getMyResults = async (req: Request) => {
-  return await Result.find({ userId: req.user._id }).sort({
-    createdAt: -1,
-  });
+const getSingleResult = async (userId: string) => {
+  const result = await Result.findOne({ userId });
+  return result;
 };
 
 export const ResultService = {
   saveResult,
-  getMyResults,
+  getSingleResult,
 };

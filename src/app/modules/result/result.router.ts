@@ -5,6 +5,6 @@ import auth from '../../../middleware/auth';
 const router = express.Router();
 
 router.post('/save-result', auth('USER'), ResultController.saveResult);
-router.get('/my-results', ResultController.getMyResults);
+router.get('/:resultId', ResultController.getSingleResults);
 
 export const resultRoutes = router;
