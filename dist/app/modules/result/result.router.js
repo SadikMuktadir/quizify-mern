@@ -9,5 +9,6 @@ const result_controller_1 = require("./result.controller");
 const auth_1 = __importDefault(require("../../../middleware/auth"));
 const router = express_1.default.Router();
 router.post('/save-result', (0, auth_1.default)('USER'), result_controller_1.ResultController.saveResult);
-router.get('/my-results', result_controller_1.ResultController.getMyResults);
+router.get('/', result_controller_1.ResultController.getAllResults);
+router.get('/:resultId', result_controller_1.ResultController.getSingleResults);
 exports.resultRoutes = router;

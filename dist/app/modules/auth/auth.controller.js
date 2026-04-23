@@ -18,11 +18,11 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 30,
     });
     res.status(201).send({
         success: true,
         message: 'User created successfully',
-        token: result === null || result === void 0 ? void 0 : result.token,
         data: result === null || result === void 0 ? void 0 : result.user,
     });
 });
@@ -33,12 +33,12 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         httpOnly: true,
         secure: false,
         sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 30,
     });
-    res.status(201).send({
+    res.status(200).json({
         success: true,
-        message: 'User login successfully',
-        token: result === null || result === void 0 ? void 0 : result.token,
-        data: result === null || result === void 0 ? void 0 : result.user,
+        message: 'Login successful',
+        data: result.user,
     });
 });
 const getAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

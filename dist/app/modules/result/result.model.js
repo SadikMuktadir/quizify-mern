@@ -41,6 +41,14 @@ const resultSchema = new mongoose_1.Schema({
         ref: 'User',
         required: true,
     },
+    category: { type: String },
+    topicName: { type: String },
+    questionIds: [
+        {
+            type: mongoose_1.default.Schema.Types.ObjectId,
+            ref: 'Question',
+        },
+    ],
     total: { type: Number },
     correct: { type: Number },
     wrong: { type: Number },

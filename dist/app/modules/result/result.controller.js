@@ -25,16 +25,27 @@ const saveResult = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
-const getMyResults = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const results = yield result_service_1.ResultService.getMyResults(req);
+const getAllResults = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield result_service_1.ResultService.getAllResult();
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: 'Results fetched successfully',
-        data: results,
+        message: 'All Results get successfully',
+        data: result,
+    });
+}));
+const getSingleResults = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const resultId = req.params.resultId;
+    const result = yield result_service_1.ResultService.getSingleResult(resultId);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 200,
+        success: true,
+        message: 'Results get successfully',
+        data: result,
     });
 }));
 exports.ResultController = {
     saveResult,
-    getMyResults,
+    getAllResults,
+    getSingleResults,
 };
