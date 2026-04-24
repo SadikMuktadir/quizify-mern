@@ -8,49 +8,47 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authController = void 0;
+const catchAsync_1 = __importDefault(require("../../../utils/catchAsync"));
 const auth_service_1 = require("./auth.service");
-const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const payload = req.body;
-    const result = yield auth_service_1.authService.registerUser(payload);
+const register = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_service_1.authService.registerUser(req.body);
     res.cookie('accessToken', result.token, {
         httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        maxAge: 1000 * 60 * 60 * 24 * 30,
+        // secure: false, // 🔴 change to true in production (HTTPS)
+        // sameSite: 'lax',
+        secure: true,
+        sameSite: 'none',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
     res.status(201).send({
         success: true,
         message: 'User created successfully',
-        data: result === null || result === void 0 ? void 0 : result.user,
-    });
-});
-const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const getUser = req.body;
-    const result = yield auth_service_1.authService.loginUser(getUser);
-    res.cookie('accessToken', result.token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax',
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-    });
-    res.status(200).json({
-        success: true,
-        message: 'Login successful',
+        token: result.token, // ✅ add this
         data: result.user,
     });
-});
-const getAllUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield auth_service_1.authService.getAllUser();
+}));
+const login = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield auth_service_1.authService.loginUser(req.body);
+    res.cookie('accessToken', result.token, {
+        httpOnly: true,
+        // secure: false, // 🔴 change to true in production (HTTPS)
+        // sameSite: 'lax',secure: true,
+        sameSite: 'none',
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
     res.status(201).send({
         success: true,
         message: 'User login successfully',
-        data: result,
+        token: result === null || result === void 0 ? void 0 : result.token,
+        data: result === null || result === void 0 ? void 0 : result.user,
     });
-});
+}));
 exports.authController = {
-    registerUser,
-    loginUser,
-    getAllUser,
+    register,
+    login,
 };

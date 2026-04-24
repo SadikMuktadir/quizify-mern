@@ -1,8 +1,9 @@
-import { Request } from 'express';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Result } from './result.model';
 import mongoose from 'mongoose';
 
-const saveResult = async (req: Request) => {
+const saveResult = async (req: any) => {
   const {
     total,
     correct,

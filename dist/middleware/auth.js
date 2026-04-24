@@ -12,25 +12,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const jwtHelper_1 = require("../utils/jwtHelper");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const catchAsync_1 = __importDefault(require("../utils/catchAsync"));
 const config_1 = __importDefault(require("../app/config"));
-const auth = (...roles) => {
-    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const token = req.cookies.accessToken;
-            if (!token) {
-                throw new Error('You are not authorized');
-            }
-            const verifyUser = jwtHelper_1.jwtHelper.verifyToken(token, config_1.default.jwt_access_token);
-            req.user = verifyUser;
-            if (roles.length && !roles.includes(verifyUser.role)) {
-                throw new Error('You are not authorized');
-            }
-            next();
+const auth_model_1 = __importDefault(require("../app/modules/auth/auth.model"));
+const auth = (...requiredRole) => {
+    return (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b;
+        const token = ((_a = req.cookies) === null || _a === void 0 ? void 0 : _a.accessToken) || ((_b = req.headers.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1]);
+        if (!token) {
+            throw new Error('You are not authorized');
         }
-        catch (err) {
-            next(err);
+        const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_token);
+        const { email, role } = decoded;
+        const user = yield auth_model_1.default.findOne({ email });
+        if (!user) {
+            throw new Error('User not found');
         }
-    });
+        if (requiredRole && !requiredRole.includes(role)) {
+            throw new Error('You are not authorized');
+        }
+        req.user = decoded;
+        next();
+    }));
 };
 exports.default = auth;

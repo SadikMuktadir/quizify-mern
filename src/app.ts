@@ -7,11 +7,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: [
-      'http://localhost:3000',
-      'https://quizfy-mern.vercel.app',
-      'https://quizifyfront.vercel.app',
-    ],
+    origin: ['http://localhost:3000', 'https://quizifyfront.vercel.app'],
     credentials: true,
   }),
 );

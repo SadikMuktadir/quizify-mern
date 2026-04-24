@@ -1,16 +1,12 @@
-import bcrypt from 'bcrypt';
-import User from './auth.model';
 import config from '../../config';
+import { ILoginUser } from './auth.interface';
+import { IUser } from '../user/user.interface';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { ILoginUser, IUser } from './auth.interface';
+import User from './auth.model';
 
 const registerUser = async (payload: IUser) => {
-  if (!payload.password) {
-    throw new Error('Password is required');
-  }
-
   const hashedPassword = await bcrypt.hash(payload.password, 12);
-
   const userData = { ...payload, password: hashedPassword };
   const result = await User.create(userData);
   const token = jwt.sign(
@@ -29,23 +25,14 @@ const registerUser = async (payload: IUser) => {
 const loginUser = async (payload: ILoginUser) => {
   const user = await User.findOne({
     email: payload?.email,
-  }).select('+password');
-
+  });
   if (!user) {
     throw new Error('User not found');
   }
+  const checkPassword = await bcrypt.compare(payload?.password, user?.password);
 
-  const isPasswordMatched = await bcrypt.compare(
-    payload?.password,
-    user?.password,
-  );
-
-  if (!isPasswordMatched) {
-    throw new Error('Invalid credentials');
-  }
-
-  if (!config.jwt_access_token) {
-    throw new Error('JWT_SECRET is not defined');
+  if (!checkPassword) {
+    throw new Error('Password is not match');
   }
   const token = jwt.sign(
     {
@@ -56,17 +43,10 @@ const loginUser = async (payload: ILoginUser) => {
     config.jwt_access_token || 'secret-token',
     { expiresIn: '30d' },
   );
-
   return { token, user };
-};
-
-const getAllUser = async () => {
-  const result = await User.find();
-  return result;
 };
 
 export const authService = {
   registerUser,
   loginUser,
-  getAllUser,
 };

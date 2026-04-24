@@ -1,52 +1,46 @@
 import { Request, Response } from 'express';
+import catchAsync from '../../../utils/catchAsync';
 import { authService } from './auth.service';
 
-const registerUser = async (req: Request, res: Response) => {
-  const payload = req.body;
-  const result = await authService.registerUser(payload);
+const register = catchAsync(async (req: Request, res: Response) => {
+  const result = await authService.registerUser(req.body);
 
   res.cookie('accessToken', result.token, {
     httpOnly: true,
-    secure: false,
-    sameSite: 'lax',
-     maxAge: 1000 * 60 * 60 * 24 * 30,
+    // secure: false, // 🔴 change to true in production (HTTPS)
+    // sameSite: 'lax',
+    secure: true,
+    sameSite: 'none',
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
   });
 
   res.status(201).send({
     success: true,
     message: 'User created successfully',
-    data: result?.user,
+    token: result.token, // ✅ add this
+    data: result.user,
   });
-};
-
-const loginUser = async (req: Request, res: Response) => {
-  const getUser = req.body;
-  const result = await authService.loginUser(getUser);
-
-res.cookie('accessToken', result.token, {
-  httpOnly: true,
-  secure: false,
-  sameSite: 'lax',
-  maxAge: 1000 * 60 * 60 * 24 * 30,
 });
 
-res.status(200).json({
-  success: true,
-  message: 'Login successful',
-  data: result.user,
-});
-};
-const getAllUser = async (req: Request, res: Response) => {
-  const result = await authService.getAllUser();
+const login = catchAsync(async (req: Request, res: Response) => {
+  const result = await authService.loginUser(req.body);
+
+  res.cookie('accessToken', result.token, {
+    httpOnly: true,
+    // secure: false, // 🔴 change to true in production (HTTPS)
+    // sameSite: 'lax',secure: true,
+    sameSite: 'none',
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  });
+
   res.status(201).send({
     success: true,
     message: 'User login successfully',
-    data: result,
+    token: result?.token,
+    data: result?.user,
   });
-};
-
+});
 export const authController = {
-  registerUser,
-  loginUser,
-  getAllUser,
+  register,
+  login,
 };

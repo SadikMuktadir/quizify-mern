@@ -13,14 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authService = void 0;
-const bcrypt_1 = __importDefault(require("bcrypt"));
-const auth_model_1 = __importDefault(require("./auth.model"));
 const config_1 = __importDefault(require("../../config"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const auth_model_1 = __importDefault(require("./auth.model"));
 const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    if (!payload.password) {
-        throw new Error('Password is required');
-    }
     const hashedPassword = yield bcrypt_1.default.hash(payload.password, 12);
     const userData = Object.assign(Object.assign({}, payload), { password: hashedPassword });
     const result = yield auth_model_1.default.create(userData);
@@ -34,16 +31,13 @@ const registerUser = (payload) => __awaiter(void 0, void 0, void 0, function* ()
 const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield auth_model_1.default.findOne({
         email: payload === null || payload === void 0 ? void 0 : payload.email,
-    }).select('+password');
+    });
     if (!user) {
         throw new Error('User not found');
     }
-    const isPasswordMatched = yield bcrypt_1.default.compare(payload === null || payload === void 0 ? void 0 : payload.password, user === null || user === void 0 ? void 0 : user.password);
-    if (!isPasswordMatched) {
-        throw new Error('Invalid credentials');
-    }
-    if (!config_1.default.jwt_access_token) {
-        throw new Error('JWT_SECRET is not defined');
+    const checkPassword = yield bcrypt_1.default.compare(payload === null || payload === void 0 ? void 0 : payload.password, user === null || user === void 0 ? void 0 : user.password);
+    if (!checkPassword) {
+        throw new Error('Password is not match');
     }
     const token = jsonwebtoken_1.default.sign({
         _id: user === null || user === void 0 ? void 0 : user._id,
@@ -52,12 +46,7 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
     }, config_1.default.jwt_access_token || 'secret-token', { expiresIn: '30d' });
     return { token, user };
 });
-const getAllUser = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield auth_model_1.default.find();
-    return result;
-});
 exports.authService = {
     registerUser,
     loginUser,
-    getAllUser,
 };
