@@ -7,17 +7,15 @@ const register = catchAsync(async (req: Request, res: Response) => {
 
   res.cookie('accessToken', result.token, {
     httpOnly: true,
-    // secure: false, // 🔴 change to true in production (HTTPS)
-    // sameSite: 'lax',
     secure: true,
     sameSite: 'none',
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
   res.status(201).send({
     success: true,
     message: 'User created successfully',
-    token: result.token, // ✅ add this
+    token: result.token,
     data: result.user,
   });
 });
@@ -27,10 +25,8 @@ const login = catchAsync(async (req: Request, res: Response) => {
 
   res.cookie('accessToken', result.token, {
     httpOnly: true,
-    // secure: false, // 🔴 change to true in production (HTTPS)
-    // sameSite: 'lax',secure: true,
     sameSite: 'none',
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
   res.status(201).send({
