@@ -13,27 +13,59 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const catchAsync_1 = __importDefault(require("../utils/catchAsync"));
 const config_1 = __importDefault(require("../app/config"));
 const auth_model_1 = __importDefault(require("../app/modules/auth/auth.model"));
-const auth = (...requiredRole) => {
-    return (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b;
-        const token = ((_a = req.cookies) === null || _a === void 0 ? void 0 : _a.accessToken) || ((_b = req.headers.authorization) === null || _b === void 0 ? void 0 : _b.split(' ')[1]);
-        if (!token) {
-            throw new Error('You are not authorized');
+// Extend Express Request type (IMPORTANT)
+const auth = (...requiredRoles) => {
+    return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
+        try {
+            // 1. Get token safely
+            const authHeader = req.headers.authorization;
+            const token = ((_a = req.cookies) === null || _a === void 0 ? void 0 : _a.accessToken) ||
+                (authHeader ? authHeader.split(' ')[1] : undefined);
+            // 2. Validate token exists
+            if (!token || typeof token !== 'string') {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Unauthorized: no token provided',
+                });
+            }
+            // 3. Verify token
+            const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_token);
+            if (!(decoded === null || decoded === void 0 ? void 0 : decoded.email)) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Invalid token',
+                });
+            }
+            // 4. Find user
+            const user = yield auth_model_1.default.findOne({ email: decoded.email });
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'User not found',
+                });
+            }
+            // 5. Role check
+            if (requiredRoles.length > 0 &&
+                !requiredRoles.includes(user.role)) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Forbidden: insufficient permissions',
+                });
+            }
+            // 6. Attach user to request
+            req.user = user;
+            next();
         }
-        const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwt_access_token);
-        const { email, role } = decoded;
-        const user = yield auth_model_1.default.findOne({ email });
-        if (!user) {
-            throw new Error('User not found');
+        catch (error) {
+            console.error('Auth error:', error);
+            return res.status(401).json({
+                success: false,
+                message: 'Authentication failed',
+            });
         }
-        if (requiredRole && !requiredRole.includes(role)) {
-            throw new Error('You are not authorized');
-        }
-        req.user = decoded;
-        next();
-    }));
+    });
 };
 exports.default = auth;

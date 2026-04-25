@@ -17,9 +17,9 @@ exports.ResultService = void 0;
 const result_model_1 = require("./result.model");
 const mongoose_1 = __importDefault(require("mongoose"));
 const saveResult = (req) => __awaiter(void 0, void 0, void 0, function* () {
-    const { total, correct, wrong, skipped, score, category, topicName, questionIds, } = req.body;
+    const { userId, total, correct, wrong, skipped, score, category, topicName, questionIds, } = req.body;
     const result = yield result_model_1.Result.create({
-        userId: req.user._id,
+        userId,
         total,
         correct,
         wrong,

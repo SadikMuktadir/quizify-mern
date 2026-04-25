@@ -19,16 +19,14 @@ const register = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 
     const result = yield auth_service_1.authService.registerUser(req.body);
     res.cookie('accessToken', result.token, {
         httpOnly: true,
-        // secure: false, // 🔴 change to true in production (HTTPS)
-        // sameSite: 'lax',
         secure: true,
         sameSite: 'none',
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        maxAge: 30 * 24 * 60 * 60 * 1000,
     });
     res.status(201).send({
         success: true,
         message: 'User created successfully',
-        token: result.token, // ✅ add this
+        token: result.token,
         data: result.user,
     });
 }));
@@ -36,10 +34,9 @@ const login = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, 
     const result = yield auth_service_1.authService.loginUser(req.body);
     res.cookie('accessToken', result.token, {
         httpOnly: true,
-        // secure: false, // 🔴 change to true in production (HTTPS)
-        // sameSite: 'lax',secure: true,
+        secure: true,
         sameSite: 'none',
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        maxAge: 30 * 24 * 60 * 60 * 1000,
     });
     res.status(201).send({
         success: true,

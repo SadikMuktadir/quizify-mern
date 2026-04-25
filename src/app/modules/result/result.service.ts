@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 
 const saveResult = async (req: any) => {
   const {
+    userId,
     total,
     correct,
     wrong,
@@ -16,7 +17,7 @@ const saveResult = async (req: any) => {
   } = req.body;
 
   const result = await Result.create({
-    userId: req.user._id,
+    userId,
     total,
     correct,
     wrong,
