@@ -8,6 +8,7 @@ const user_routes_1 = require("../modules/user/user.routes");
 const question_routes_1 = require("../modules/question/question.routes");
 const auth_routes_1 = __importDefault(require("../modules/auth/auth.routes"));
 const result_router_1 = require("../modules/result/result.router");
+const course_router_1 = __importDefault(require("../modules/course/course.router"));
 const router = express_1.default.Router();
 const moduleRoutes = [
     {
@@ -25,6 +26,10 @@ const moduleRoutes = [
     {
         path: '/result',
         route: result_router_1.resultRoutes,
+    },
+    {
+        path: '/course',
+        route: course_router_1.default,
     },
 ];
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
