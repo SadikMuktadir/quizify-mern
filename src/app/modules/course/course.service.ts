@@ -16,8 +16,20 @@ const getSingleCourse = async (id: string) => {
   return result;
 };
 
+const updateCourse = async (id: string, data: ICourse) => {
+  const result = await Course.findByIdAndUpdate(id, data, { new: true });
+  return result;
+};
+
+const deleteCourse = async (id: string) => {
+  const result = await Course.findByIdAndDelete(id);
+  return result;
+};
+
 export const courseService = {
   createCourse,
   getCourses,
   getSingleCourse,
+  updateCourse,
+  deleteCourse,
 };
