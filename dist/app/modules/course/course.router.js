@@ -6,4 +6,6 @@ const courseRouter = (0, express_1.Router)();
 courseRouter.post('/create-course', course_controller_1.courseController.createCourse);
 courseRouter.get('/', course_controller_1.courseController.getCourses);
 courseRouter.get('/:id', course_controller_1.courseController.getSingleCourse);
+courseRouter.patch('/:id', course_controller_1.courseController.updateCourse);
+courseRouter.delete('/:id', course_controller_1.courseController.deleteCourse);
 exports.default = courseRouter;

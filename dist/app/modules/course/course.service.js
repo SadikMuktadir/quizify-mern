@@ -23,8 +23,18 @@ const getSingleCourse = (id) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield course_model_1.Course.findById(id);
     return result;
 });
+const updateCourse = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield course_model_1.Course.findByIdAndUpdate(id, data, { new: true });
+    return result;
+});
+const deleteCourse = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield course_model_1.Course.findByIdAndDelete(id);
+    return result;
+});
 exports.courseService = {
     createCourse,
     getCourses,
     getSingleCourse,
+    updateCourse,
+    deleteCourse,
 };

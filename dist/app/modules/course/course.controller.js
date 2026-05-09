@@ -44,8 +44,30 @@ const getSingleCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
         data: result,
     });
 }));
+const updateCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const result = yield course_service_1.courseService.updateCourse(id, req.body);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 201,
+        success: true,
+        message: 'Course Update Successfully',
+        data: result,
+    });
+}));
+const deleteCourse = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const result = yield course_service_1.courseService.deleteCourse(id);
+    (0, sendResponse_1.default)(res, {
+        statusCode: 201,
+        success: true,
+        message: 'Course delete Successfully',
+        data: result,
+    });
+}));
 exports.courseController = {
     createCourse,
     getCourses,
-    getSingleCourse
+    getSingleCourse,
+    updateCourse,
+    deleteCourse,
 };

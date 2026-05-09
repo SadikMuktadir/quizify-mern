@@ -38,21 +38,41 @@ const mongoose_1 = __importStar(require("mongoose"));
 const courseSchema = new mongoose_1.Schema({
     title: {
         type: String,
+        required: true,
     },
-    description: {
+    small_description: {
         type: String,
+        required: true,
+    },
+    large_description: {
+        type: String,
+        required: true,
     },
     students: {
         type: String,
+        required: true,
     },
     duration: {
         type: String,
+        required: true,
     },
     rating: {
         type: Number,
+        required: true,
     },
     image: {
         type: String,
+        required: true,
+    },
+    features: {
+        type: [String],
+        required: true,
+        default: [],
+    },
+    curriculum: {
+        type: [String],
+        required: true,
+        default: [],
     },
 }, {
     timestamps: true,
